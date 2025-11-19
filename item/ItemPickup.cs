@@ -32,7 +32,7 @@ public class ItemPickup : MonoBehaviour
         rb.AddForce(Vector2.up * upwardForce, ForceMode2D.Impulse);
         Invoke(nameof(EnableGravity), floatTime);
 
-        // ✅ Bật collider lại sau 2 giây (để tránh va chạm sớm)
+        // ✅ Bật collider lại sau 1 giây (để tránh va chạm sớm)
         Invoke(nameof(EnableColliderAfterDelay), 1f);
     }
 

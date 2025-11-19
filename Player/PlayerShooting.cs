@@ -156,8 +156,17 @@ public class PlayerShooting : MonoBehaviour
     {
         if (bulletPrefab == null || spawnPoint == null) return;
 
-        GameObject bullet = Instantiate(bulletPrefab, spawnPoint.position, Quaternion.identity);
-        bullet.GetComponent<PlayerBullet>().SetDirection(direction);
+        // ✅ Tính góc để xoay sprite đạn
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
+        // ✅ Instantiate + xoay đạn theo hướng bắn
+        GameObject bullet = Instantiate(bulletPrefab, spawnPoint.position, Quaternion.Euler(0, 0, angle));
+
+        PlayerBullet bulletScript = bullet.GetComponent<PlayerBullet>();
+        if (bulletScript != null)
+        {
+            bulletScript.SetDirection(direction);
+        }
     }
 
     /// <summary>
@@ -167,29 +176,19 @@ public class PlayerShooting : MonoBehaviour
     {
         if (BulletS == null || spawnPoint == null) return;
 
-        // Góc lệch nhỏ quanh hướng chính (tỏa nhẹ)
-        const float angleOffset = 10f; // độ lệch mỗi tia
+        const float angleOffset = 15f; // lệch 15° mỗi bên
         float baseAngle = Mathf.Atan2(baseDir.y, baseDir.x) * Mathf.Rad2Deg;
 
-        float[] angles = new float[]
-        {
-            baseAngle + angleOffset,
-            baseAngle,
-            baseAngle - angleOffset
-        };
+        float[] angles = { baseAngle - angleOffset, baseAngle, baseAngle + angleOffset };
 
         foreach (float angle in angles)
         {
-            Vector2 dir = new Vector2(
-                Mathf.Cos(angle * Mathf.Deg2Rad),
-                Mathf.Sin(angle * Mathf.Deg2Rad)
-            );
+            Vector2 dir = new Vector2(Mathf.Cos(angle * Mathf.Deg2Rad), Mathf.Sin(angle * Mathf.Deg2Rad));
 
-            GameObject bullet = Instantiate(BulletS, spawnPoint.position, Quaternion.identity);
-            bullet.GetComponent<PlayerBullet>().SetDirection(dir.normalized);
+            // ✅ Xoay đạn S theo góc
+            GameObject bullet = Instantiate(BulletS, spawnPoint.position, Quaternion.Euler(0, 0, angle));
+            bullet.GetComponent<PlayerBullet>().SetDirection(dir);
         }
-
-        Debug.Log("💥 Spread Gun: 3 tia!");
     }
     #endregion
 
